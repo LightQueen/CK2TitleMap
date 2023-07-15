@@ -1,0 +1,165 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.example</groupId>
+  <artifactId>demo2</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>demo2 Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.5</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <properties>
+    <java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <testcontainers.version>1.17.0</testcontainers.version>
+    <apt.version>1.1.3</apt.version>
+    <jvm.enable-preview></jvm.enable-preview>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- Antlr -->
+
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.10.1</version>
+    </dependency>
+
+    <!-- jackson -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <!-- Code Generator -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Spring Boot Hot Swap Tool -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- DB Driver -->
+
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.28</version>
+        <scope>runtime</scope>
+    </dependency>
+
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Java 9++ dependencies -->
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+
+  </dependencies>
+
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>spring-libs-snapshot</id>
+      <url>https://repo.spring.io/libs-snapshot</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <finalName>demo2</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>4.10.1</version>
+        <executions>
+          <execution>
+            <id>antlr</id>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+            <phase>none</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <outputDirectory>src/test/java</outputDirectory>
+          <listener>true</listener>
+          <treatWarningsAsErrors>true</treatWarningsAsErrors>
+        </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+              <source>16</source>
+              <target>16</target>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
