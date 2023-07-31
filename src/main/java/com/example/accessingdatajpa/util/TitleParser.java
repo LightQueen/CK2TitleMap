@@ -2,7 +2,7 @@ package com.example.accessingdatajpa.util;
 
 import com.example.accessingdatajpa.entity.Dynasty;
 import com.example.accessingdatajpa.entity.Title;
-import com.example.accessingdatajpa.entity.Character;
+import com.example.accessingdatajpa.entity.Ch;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -70,10 +70,10 @@ public class TitleParser {
                     int index2 = line.indexOf("\tholder=");
                     if(index2 > -1){
                         String holder_name = line.substring(index2 + "\tholder=".length());
-                        Character character = new Character();
-                        character.setCode(holder_name);
-                        character.setName(holder_name);
-                        t.setHolder(character);
+                        Ch ch = new Ch();
+                        ch.setCode(holder_name);
+                        ch.setName(holder_name);
+                        t.setHolder(ch);
                     }
 
 

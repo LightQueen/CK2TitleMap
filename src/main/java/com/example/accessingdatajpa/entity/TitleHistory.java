@@ -45,6 +45,6 @@ public class TitleHistory {
 
     @ManyToOne
     @JoinColumn(name = "holder_code")
-    private Character holder;
+    private Ch holder;
 
 }

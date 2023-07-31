@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.*;
 
@@ -14,8 +13,8 @@ import java.util.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Character {
-
+public class Ch {
+    
 
     @Id
     @Column(name = "code", nullable = false)
@@ -43,25 +42,40 @@ public class Character {
     private Dynasty dnt;
 
     @ManyToOne(cascade = {CascadeType.ALL})
-    private Character fat;
+    private Ch fat;
 
     @OneToMany(mappedBy = "fat",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @OrderBy("bd")
-    private List<Character> fatChild = new ArrayList<>();
+    private List<Ch> fatChildren = new ArrayList<>();
 
     @ManyToOne(cascade = {CascadeType.ALL})
-    private Character mot;
+    private Ch mot;
 
     @OneToMany(mappedBy = "mot",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @OrderBy("bd")
-    private List<Character> motChild = new ArrayList<>();
+    private List<Ch> motChildren = new ArrayList<>();
+
+    public void addChild(Ch ch){
+        if(fem){
+            ch.setMot(this);
+            motChildren.add(ch);
+        } else {
+            ch.setFat(this);
+            fatChildren.add(ch);
+        }
+    }
 
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "host_code")
-    private Character host;
+    private Ch host;
 
     @OneToMany(mappedBy = "host",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Character> guests = new ArrayList<>();
+    private List<Ch> guests = new ArrayList<>();
+
+    public void addGuest(Ch ch) {
+        ch.setHost(this);
+        guests.add(ch);
+    }
 
     // @Column(name = "score", precision = 19, scale = 2)
     // private BigDecimal score = new BigDecimal(0);
@@ -72,8 +86,25 @@ public class Character {
     @OrderBy("level desc")
     private List<Title> titles = new ArrayList<>();
 
+    public List<Title> getTitles() {
+        // 如果不想修改
+        // 那么 return Collections.unmodifiableList(titles);
+        return new ArrayList<>(titles);
+    }
+
+    /**
+     * 相应的，不使用 setHolder 方法
+     * @param title
+     */
+    public void addTitle(Title title) {
+        title.setHolder(this);
+        titles.add(title);
+    }
+
     @OneToMany(mappedBy = "holder",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OrderBy("sd desc")
     private List<TitleHistory> titleHistories = new ArrayList<>();
+
 
 //    @MappedCollection(keyColumn = "title_code") // 来自于 spring-data-jdbc 包
 //    private final @org.springframework.data.annotation.AccessType
@@ -84,14 +115,14 @@ public class Character {
             joinColumns = @JoinColumn(name = "ch_code"))
     private List<Title> oh = new ArrayList<>();
 
-    public Character() {}
+    public Ch() {}
 
-    public Character(String code,String name) {
+    public Ch(String code, String name) {
         this.code = code;
         this.name = name;
     }
 
-    public Character(String code, String name, Boolean fem, Date bd, Date dd) {
+    public Ch(String code, String name, Boolean fem, Date bd, Date dd) {
         this.code = code;
         this.name = name;
         this.fem = fem;
@@ -99,7 +130,7 @@ public class Character {
         this.dd = dd;
     }
 
-    public Character(String code, String name, Boolean fem, Date bd, Date dd, Dynasty dnt, Character fat, Character mot, Character host) {
+    public Ch(String code, String name, Boolean fem, Date bd, Date dd, Dynasty dnt, Ch fat, Ch mot, Ch host) {
         this.code = code;
         this.name = name;
         this.fem = fem;

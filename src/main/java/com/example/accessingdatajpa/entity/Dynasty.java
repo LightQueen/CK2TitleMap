@@ -6,11 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @ToString(of = {"code","name"})
@@ -29,7 +26,12 @@ public class Dynasty {
     private int score;
 
     @OneToMany(mappedBy = "dnt", cascade = CascadeType.ALL)
-    private List<Character> descendant = new ArrayList<>();
+    private List<Ch> descendants = new ArrayList<>();
+
+    public void addDescendant(Ch ch){
+        ch.setDnt(this);
+        descendants.add(ch);
+    }
 
     public Dynasty() {}
 

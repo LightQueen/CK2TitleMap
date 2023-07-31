@@ -1,8 +1,8 @@
 package com.example.accessingdatajpa.controller;
 
 import com.example.accessingdatajpa.entity.*;
-import com.example.accessingdatajpa.entity.Character;
-import com.example.accessingdatajpa.dao.CharacterRepository;
+import com.example.accessingdatajpa.entity.Ch;
+import com.example.accessingdatajpa.dao.ChRepository;
 import com.example.accessingdatajpa.dao.DynastyRepository;
 import com.example.accessingdatajpa.service.HongService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +23,7 @@ import java.util.Map;
 public class MainController {
 
     @Autowired
-    private EntityManager entityManager;
-    @Autowired
-    private DynastyRepository dynastyRepository;
-    @Autowired
-    private CharacterRepository characterRepository;
-
+    private ChRepository chRepository;
     @Autowired
     private HongService hongService;
 
@@ -39,8 +34,8 @@ public class MainController {
     }
 
     @GetMapping(path="/all-guests")
-    public @ResponseBody List<Character> allGuest() {
-        Character root = characterRepository.findById("JiaMu").get();
+    public @ResponseBody List<Ch> allGuest() {
+        Ch root = chRepository.findById("JiaMu").get();
         return hongService.allGuestsByCh(root);
     }
 

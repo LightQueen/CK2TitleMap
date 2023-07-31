@@ -13,7 +13,7 @@ public enum TitleLevel {
     }
     public static TitleLevel of(String level){
         for (TitleLevel l : TitleLevel.values()) {
-            if (l.name().equals(level.toUpperCase())){
+            if (l.name().equals(level.substring(0,1).toUpperCase())){
                 return l;
             }
         }

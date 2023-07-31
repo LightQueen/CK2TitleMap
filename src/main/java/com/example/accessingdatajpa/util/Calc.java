@@ -2,38 +2,42 @@ package com.example.accessingdatajpa.util;
 
 import com.example.accessingdatajpa.entity.Dynasty;
 import com.example.accessingdatajpa.entity.Title;
-import com.example.accessingdatajpa.entity.Character;
+import com.example.accessingdatajpa.entity.Ch;
 import com.example.accessingdatajpa.entity.TitleLevel;
 
 import java.util.List;
 
 public class Calc {
 
-    public static void calcLevel(Character character) {
+    public static void calcLevel(Ch ch) {
         List<Title> titleList;
         // 根据状态，两种取法
-        if(character.getDd() == null) {
-            titleList = character.getTitles();
+        if(ch.getDd() == null) {
+            titleList = ch.getTitles();
         } else {
-            titleList = character.getOh();
+            titleList = ch.getOh();
         }
         // 统计
         if(titleList.size() > 0) {
-            character.setLevel(titleList.get(0).getLevel());
+            ch.setLevel(titleList.get(0).getLevel());
         } else {
             // nobody
-            character.setLevel(TitleLevel.N);
+            ch.setLevel(TitleLevel.N);
         }
     }
 
-    public static void calcScore(Character character) {
+    public static void calcLevel(Title title) {
+        title.setLevel(TitleLevel.of(title.getCode()));
+    }
+
+    public static void calcScore(Ch ch) {
         int sum = 0;
         List<Title> titleList;
         // 根据状态，两种取法
-        if(character.getDd() == null) {
-            titleList = character.getTitles();
+        if(ch.getDd() == null) {
+            titleList = ch.getTitles();
         } else {
-            titleList = character.getOh();
+            titleList = ch.getOh();
         }
         // 统计
         if (titleList.size() > 0) {
@@ -41,15 +45,15 @@ public class Calc {
                 sum += title.getLevel().getScore();
             }
         }
-        character.setScore(sum);
+        ch.setScore(sum);
     }
 
     public static void calcScore(Dynasty dynasty) {
         int sum = 0;
-        List<Character> characterList = dynasty.getDescendant();
-        if (characterList.size() > 0) {
-            for (Character character:characterList) {
-                sum += character.getScore();
+        List<Ch> chList = dynasty.getDescendants();
+        if (chList.size() > 0) {
+            for (Ch ch : chList) {
+                sum += ch.getScore();
             }
         }
         dynasty.setScore(sum);

@@ -1,8 +1,8 @@
 package com.example.accessingdatajpa.service;
 
 import com.example.accessingdatajpa.entity.*;
-import com.example.accessingdatajpa.entity.Character;
-import com.example.accessingdatajpa.dao.CharacterRepository;
+import com.example.accessingdatajpa.entity.Ch;
+import com.example.accessingdatajpa.dao.ChRepository;
 import com.example.accessingdatajpa.dao.DynastyRepository;
 import com.example.accessingdatajpa.dao.TitleHistoryRepository;
 import com.example.accessingdatajpa.dao.TitleRepository;
@@ -10,8 +10,9 @@ import com.example.accessingdatajpa.util.Calc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,85 +24,81 @@ public class HongService {
     @Autowired
     private DynastyRepository dynastyRepository;
     @Autowired
-    private CharacterRepository characterRepository;
+    private ChRepository chRepository;
     @Autowired
     private TitleRepository titleRepository;
     @Autowired
     private TitleHistoryRepository titleHistoryRepository;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void clearHong() {
+        // 删除
+        titleHistoryRepository.deleteAll();
+        titleRepository.deleteAll();
+        chRepository.deleteAll();
+        dynastyRepository.deleteAll();
+    }
     /**
      * 准备数据
      */
+    @Transactional
     public void createHong(){
 
+        // clearHong();
+        // 创建
         Dynasty Jia = dynastyRepository.save(new Dynasty("jia", "贾"));
         Dynasty Wang = dynastyRepository.save(new Dynasty("wang", "王"));
         Dynasty Shi = dynastyRepository.save(new Dynasty("shi", "史"));
         Dynasty Xue = dynastyRepository.save(new Dynasty("xue", "薛"));
         Dynasty Lin = dynastyRepository.save(new Dynasty("lin", "林"));
-        List<Dynasty> dynasties = Arrays.asList(Jia,Wang,Shi,Xue,Lin);
 
-        Character JiaDaiShan = characterRepository.save(new Character("JiaDaiShan", "贾代善", false, Date.valueOf("0950-01-01"), Date.valueOf("1000-01-01"),  Jia,null,null,null));
-        Character JiaMu = characterRepository.save(new Character("JiaMu", "贾母", true, Date.valueOf("0950-01-01"), null,Shi,null,null,null));
-        Character JiaZheng = characterRepository.save(new Character("JiaZheng", "贾政", false, Date.valueOf("0975-01-01"), null,Jia,JiaDaiShan,JiaMu,JiaMu));
-        Character WangFuRen = characterRepository.save(new Character("WangFuRen", "王夫人", true, Date.valueOf("0975-01-01"), null,Wang,null,null,JiaMu));
-        Character JiaBaoYu = characterRepository.save(new Character("JiaBaoYu", "贾宝玉", false, Date.valueOf("1000-01-01"), null,Jia,JiaZheng,WangFuRen,JiaMu));
-        Character XueBaoChai = characterRepository.save(new Character("XueBaoChai", "薛宝钗", true, Date.valueOf("1000-03-01"), null,Xue,null,null,null));
-        Character LinDaiYu = characterRepository.save(new Character("LinDaiYu", "林黛玉", true, Date.valueOf("1000-03-01"), null,Lin,null,null,null));
-
+        Ch JiaDaiShan = chRepository.save(new Ch("JiaDaiShan", "贾代善", false, Date.valueOf("0950-01-01"), Date.valueOf("1000-01-01"),  Jia,null,null,null));
+        Ch JiaMu = chRepository.save(new Ch("JiaMu", "贾母", true, Date.valueOf("0950-01-01"), null,Shi,null,null,null));
+        Ch JiaZheng = chRepository.save(new Ch("JiaZheng", "贾政", false, Date.valueOf("0975-01-01"), null,Jia,JiaDaiShan,JiaMu,JiaMu));
+        Ch WangFuRen = chRepository.save(new Ch("WangFuRen", "王夫人", true, Date.valueOf("0975-01-01"), null,Wang,null,null,JiaMu));
+        Ch JiaBaoYu = chRepository.save(new Ch("JiaBaoYu", "贾宝玉", false, Date.valueOf("1000-01-01"), null,Jia,JiaZheng,WangFuRen,JiaMu));
+        Ch XueBaoChai = chRepository.save(new Ch("XueBaoChai", "薛宝钗", true, Date.valueOf("1000-03-01"), null,Xue,null,null,null));
+        Ch LinDaiYu = chRepository.save(new Ch("LinDaiYu", "林黛玉", true, Date.valueOf("1000-03-01"), null,Lin,null,null,null));
 
         Title e_JiaFu = titleRepository.save(new Title("e_JiaFu","贾府"));
-        e_JiaFu.setHolder(JiaMu);
         Title k_DaGuanYuan = titleRepository.save(new Title("k_DaGuanYuan","大观园"));
         k_DaGuanYuan.setDe_jure_liege(e_JiaFu);
-        k_DaGuanYuan.setHolder(JiaMu);
         k_DaGuanYuan.setLiege(e_JiaFu);
         Title k_RongGuoFu = titleRepository.save(new Title("k_RongGuoFu","荣国府"));
         k_RongGuoFu.setDe_jure_liege(e_JiaFu);
-        k_RongGuoFu.setHolder(JiaZheng);
         k_RongGuoFu.setLiege(e_JiaFu);
         Title k_NingGuoFu = titleRepository.save(new Title("k_NingGuoFu","宁国府"));
         k_NingGuoFu.setDe_jure_liege(e_JiaFu);
-        k_NingGuoFu.setHolder(JiaMu);
         k_NingGuoFu.setLiege(e_JiaFu);
         Title d_DaGuanYuan = titleRepository.save(new Title("d_DaGuanYuan","大观园"));
         d_DaGuanYuan.setDe_jure_liege(k_DaGuanYuan);
-        d_DaGuanYuan.setHolder(JiaZheng);
         d_DaGuanYuan.setLiege(k_DaGuanYuan);
         Title c_YiHongYuan = titleRepository.save(new Title("c_YiHongYuan","怡红院"));
         c_YiHongYuan.setDe_jure_liege(k_DaGuanYuan);
-        c_YiHongYuan.setHolder(JiaBaoYu);
         c_YiHongYuan.setLiege(k_DaGuanYuan);
         Title c_XiaoXiangGuan = titleRepository.save(new Title("c_XiaoXiangGuan", "潇湘馆"));
         c_XiaoXiangGuan.setDe_jure_liege(k_DaGuanYuan);
-        c_XiaoXiangGuan.setHolder(LinDaiYu);
+        c_XiaoXiangGuan.setLiege(k_DaGuanYuan);
         Title c_HengWuYuan = titleRepository.save(new Title("c_HengWuYuan","蘅芜苑"));
         c_HengWuYuan.setDe_jure_liege(k_DaGuanYuan);
-        c_HengWuYuan.setHolder(XueBaoChai);
+        c_HengWuYuan.setLiege(k_DaGuanYuan);
         Title c_DaoXiangCun = titleRepository.save(new Title("c_DaoXiangCun","稻香村"));
         c_DaoXiangCun.setDe_jure_liege(k_DaGuanYuan);
-        c_DaoXiangCun.setHolder(JiaBaoYu);
         c_DaoXiangCun.setLiege(k_DaGuanYuan);
 
-        List<Title> e_titles = Arrays.asList(e_JiaFu);
-//        e_titles.forEach(Title::calcLevel);
-        titleRepository.saveAll(e_titles);
-        List<Title> k_titles = Arrays.asList(k_DaGuanYuan,k_RongGuoFu,k_NingGuoFu);
-//        k_titles.forEach(Title::calcLevel);
-        titleRepository.saveAll(k_titles);
-        List<Title> d_titles = Arrays.asList(d_DaGuanYuan);
-//        d_titles.forEach(Title::calcLevel);
-        titleRepository.saveAll(d_titles);
-        List<Title> c_titles = Arrays.asList(c_YiHongYuan,c_XiaoXiangGuan,c_HengWuYuan,c_DaoXiangCun);
-//        c_titles.forEach(Title::calcLevel);
-        titleRepository.saveAll(c_titles);
-
-
-
-        titleHistoryRepository.deleteByTitle(c_YiHongYuan);
-        titleHistoryRepository.deleteByTitle(c_XiaoXiangGuan);
-        titleHistoryRepository.deleteByTitle(c_HengWuYuan);
-        titleHistoryRepository.deleteByTitle(c_DaoXiangCun);
+        JiaMu.addTitle(e_JiaFu);
+        JiaMu.addTitle(k_NingGuoFu);
+        JiaMu.addTitle(k_DaGuanYuan);
+        JiaZheng.addTitle(k_RongGuoFu);
+        JiaZheng.addTitle(d_DaGuanYuan);
+        LinDaiYu.addTitle(c_XiaoXiangGuan);
+        JiaBaoYu.addTitle(c_DaoXiangCun);
+        JiaBaoYu.addTitle(c_YiHongYuan);
+        XueBaoChai.addTitle(c_HengWuYuan);
+        // titleHistoryRepository.deleteByTitle(c_YiHongYuan);
+        // titleHistoryRepository.deleteByTitle(c_XiaoXiangGuan);
+        // titleHistoryRepository.deleteByTitle(c_HengWuYuan);
+        // titleHistoryRepository.deleteByTitle(c_DaoXiangCun);
         TitleHistory titleHistory1 = TitleHistory.builder().title(c_YiHongYuan).holder(JiaBaoYu).holdDays(25).latest(true).build();
         TitleHistory titleHistory2 = TitleHistory.builder().title(c_XiaoXiangGuan).holder(LinDaiYu).holdDays(20).latest(true).build();
         TitleHistory titleHistory3 = TitleHistory.builder().title(c_HengWuYuan).holder(XueBaoChai).holdDays(25).latest(true).build();
@@ -114,17 +111,29 @@ public class HongService {
         TitleHistory titleHistory9 = TitleHistory.builder().title(e_JiaFu).holder(JiaDaiShan).holdDays(30).expiredDays(25).build();
         TitleHistory titleHistory10 = TitleHistory.builder().title(k_NingGuoFu).holder(JiaMu).holdDays(25).latest(true).build();
         TitleHistory titleHistory11 = TitleHistory.builder().title(k_NingGuoFu).holder(JiaMu).holdDays(25).latest(true).build();
-        List<TitleHistory> titleHistories = Arrays.asList(titleHistory1, titleHistory2, titleHistory3, titleHistory4,titleHistory5);
-        titleHistoryRepository.saveAll(titleHistories);
 
+        // 保存
+        List<TitleHistory> titleHistories1 = Arrays.asList(titleHistory1, titleHistory2, titleHistory3, titleHistory4,titleHistory5);
+        List<TitleHistory> titleHistories2 = Arrays.asList(titleHistory6, titleHistory7, titleHistory8, titleHistory9, titleHistory10,titleHistory11);
+        titleHistoryRepository.saveAll(titleHistories1);
+        titleHistoryRepository.saveAll(titleHistories2);
+
+        List<Title> e_titles = Arrays.asList(e_JiaFu);
+        List<Title> k_titles = Arrays.asList(k_DaGuanYuan,k_RongGuoFu,k_NingGuoFu);
+        List<Title> d_titles = Arrays.asList(d_DaGuanYuan);
+        List<Title> c_titles = Arrays.asList(c_YiHongYuan,c_XiaoXiangGuan,c_HengWuYuan,c_DaoXiangCun);
         List<Title> titles = new ArrayList<>(){{addAll(c_titles);addAll(d_titles);addAll(k_titles);addAll(e_titles);}};
-        Set<Character> characterSet = titles.stream().map(x -> x.getHolder()).collect(Collectors.toSet());
-        characterSet.forEach(character -> {
-            Calc.calcLevel(character);Calc.calcScore(character);});
-        characterRepository.saveAll(characterSet);
+        titles.forEach(title -> {Calc.calcLevel(title);});
 
+        List<Ch> chs = Arrays.asList(JiaDaiShan,JiaMu,JiaZheng,JiaBaoYu,WangFuRen,XueBaoChai,LinDaiYu);
+        chs.forEach(ch -> {Calc.calcLevel(ch);Calc.calcScore(ch);});
+
+        List<Dynasty> dynasties = Arrays.asList(Jia,Wang,Shi,Xue,Lin);
         dynasties.forEach(Calc::calcScore);
+
         dynastyRepository.saveAll(dynasties);
+        chRepository.saveAll(chs);
+        titleRepository.saveAll(titles);
     }
 
     /**
@@ -163,7 +172,7 @@ public class HongService {
      * @param chs 角色的数组
      * @return
      */
-    public List<Title> realmOfCh(Character... chs) {
+    public List<Title> realmOfCh(Ch... chs) {
         List<Title> realms = titleRepository.findByHolderInAndCodeLike(chs, "c%");
         return realms;
     }
@@ -174,13 +183,13 @@ public class HongService {
      * @param root 角色
      * @return
      */
-    public List<Character> allGuestsByCh(Character root) {
-        List<Character> result = new ArrayList<>();
+    public List<Ch> allGuestsByCh(Ch root) {
+        List<Ch> result = new ArrayList<>();
         result.add(root);
-        List<Character> chList = new ArrayList<>();
+        List<Ch> chList = new ArrayList<>();
         chList.add(root);
         while(chList.size() != 0) {
-            chList = characterRepository.findAllByHostIn(chList.toArray(new Character[chList.size()]));
+            chList = chRepository.findAllByHostIn(chList.toArray(new Ch[chList.size()]));
             result.addAll(chList);
         }
         return result;
@@ -192,16 +201,16 @@ public class HongService {
      * @param root 角色
      * @return
      */
-    public Map<Character, Integer> allGuestsWithDynastyDepthByCh(Character root) {
+    public Map<Ch, Integer> allGuestsWithDynastyDepthByCh(Ch root) {
 
-        Map<Character,Integer> result = new HashMap<>();
+        Map<Ch,Integer> result = new HashMap<>();
         result.put(root,1);
         Dynasty dynasty = root.getDnt();
 
-        List<Character> chList = new ArrayList<>();
+        List<Ch> chList = new ArrayList<>();
         chList.add(root);
         while(chList.size() != 0) {
-            chList = characterRepository.findAllByHostIn(chList.toArray(new Character[chList.size()]));
+            chList = chRepository.findAllByHostIn(chList.toArray(new Ch[chList.size()]));
             chList.forEach(x -> {
                 int val = 0;
                 if (x.getDnt().equals(dynasty)) {
@@ -221,11 +230,11 @@ public class HongService {
      */
     public Map<Title, Integer> realmWithDynastyDepthByDynCode(String dntCode,int type) {
         Map<Title, Integer> result = new HashMap<>();
-        List<Character> chs = characterRepository.findAllByDntCodeAndDdIsNullOrderByLevelDesc(dntCode);
-        Map<Character,Integer> processedChars = new HashMap<>();
+        List<Ch> chs = chRepository.findAllByDntCodeAndDdIsNullOrderByLevelDesc(dntCode);
+        Map<Ch,Integer> processedChars = new HashMap<>();
         chs.forEach(c ->  {
             if (!processedChars.containsKey(c)) {
-                Map<Character, Integer> chMap = allGuestsWithDynastyDepthByCh(c);
+                Map<Ch, Integer> chMap = allGuestsWithDynastyDepthByCh(c);
                 processedChars.putAll(chMap);
             }
         });
@@ -239,7 +248,7 @@ public class HongService {
             });
         }
         if (type == 2) {
-            // 法二：依赖 Character 的 titles
+            // 法二：依赖 Ch 的 titles
             processedChars.forEach((c, depth) -> {
                 c.getTitles().stream()
                         .filter(title -> title.getLevel() == TitleLevel.C)
@@ -250,7 +259,7 @@ public class HongService {
         }
         if (type == 3) {
             // 法三：依赖 Title 的 holder
-            List<Title> realms = realmOfCh(processedChars.keySet().toArray(new Character[0]));
+            List<Title> realms = realmOfCh(processedChars.keySet().toArray(new Ch[0]));
             realms.forEach(title -> {
                 result.put(title, processedChars.get(title.getHolder()));
             });
@@ -261,12 +270,12 @@ public class HongService {
     public Map<Title, Integer> realmWithDynastyDepthByDynCode2(String dntCode) {
         Map<Title, Integer> result = new HashMap<>();
 
-        List<Character> chs = characterRepository.findAllByDntCodeAndDdIsNullOrderByLevelDesc(dntCode);
+        List<Ch> chs = chRepository.findAllByDntCodeAndDdIsNullOrderByLevelDesc(dntCode);
         // 为了能够移除数据，所以用了迭代器
-        Iterator<Character> iterator = chs.iterator();
+        Iterator<Ch> iterator = chs.iterator();
         while (iterator.hasNext()) {
-            Character c = iterator.next();
-            Map<Character, Integer> chMap = allGuestsWithDynastyDepthByCh(c);
+            Ch c = iterator.next();
+            Map<Ch, Integer> chMap = allGuestsWithDynastyDepthByCh(c);
             chMap.forEach((k,v)->{
                 realmOfCh(k).forEach(x->{
                     result.put(x,v);
@@ -281,13 +290,13 @@ public class HongService {
 
     public Map<Title, Integer> realmWithDynastyDepthByDynCode3(String dntCode) {
 
-        List<Character> chs = characterRepository.findAllByDntCodeAndDdIsNullOrderByLevelDesc(dntCode);
-        Set<Character> processedChars = new HashSet<>();
+        List<Ch> chs = chRepository.findAllByDntCodeAndDdIsNullOrderByLevelDesc(dntCode);
+        Set<Ch> processedChars = new HashSet<>();
 
         return chs.stream()
-                .filter(character -> !processedChars.contains(character))
-                .flatMap(character -> {
-                    Map<Character, Integer> chMap = allGuestsWithDynastyDepthByCh(character);
+                .filter(ch -> !processedChars.contains(ch))
+                .flatMap(ch -> {
+                    Map<Ch, Integer> chMap = allGuestsWithDynastyDepthByCh(ch);
                     processedChars.addAll(chMap.keySet());
                     return chMap.entrySet().stream();
                 })
@@ -297,12 +306,12 @@ public class HongService {
     }
 
     public void test() {
-//        Character JiaBaoYu = characterRepository.findById("JiaBaoYu").get();
+//        Ch JiaBaoYu = characterRepository.findById("JiaBaoYu").get();
 //        Output.list(JiaBaoYu.getTitles(),"JiaBaoYu's title");
 //        Calc.calcLevel(JiaBaoYu);
 //        Calc.calcScore(JiaBaoYu);
 //        Calc.calcScore(JiaBaoYu.getDnt());
-//        characterRepository.save(JiaBaoYu);
+//        chRepository.save(JiaBaoYu);
 //        dynastyRepository.save(JiaBaoYu.getDnt());
 
 //        Title title = titleRepository.findById("c_HengWuYuan").get();
@@ -310,7 +319,7 @@ public class HongService {
 //        titleRepository.deleteById("c_HengWuYuan");
 //        titleRepository.flush();
         Title k_DaGuanYuan = titleRepository.findById("k_DaGuanYuan").get();
-//        Character XueBaoChai = characterRepository.findById("XueBaoChai").get();
+//        Ch XueBaoChai = characterRepository.findById("XueBaoChai").get();
 //        Title c_HengWuYuan = new Title("c_HengWuYuan","蘅芜苑");
 //        c_HengWuYuan.setDe_jure_liege(null);
 //        c_HengWuYuan.setHolder(XueBaoChai);
