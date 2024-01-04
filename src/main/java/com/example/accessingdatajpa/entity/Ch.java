@@ -1,9 +1,13 @@
 package com.example.accessingdatajpa.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.*;
 
@@ -12,9 +16,8 @@ import java.util.*;
 @Table(name="ch")
 @Getter
 @Setter
-@EqualsAndHashCode
-public class Ch {
-    
+@EqualsAndHashCode(exclude = {"fat","mot","host","guests","fatChildren","motChildren","dnt"})
+public class Ch extends BaseEntity{
 
     @Id
     @Column(name = "code", nullable = false)
@@ -24,7 +27,7 @@ public class Ch {
     private String name;
 
     @Column(name = "fem")
-    private Boolean fem;
+    private Boolean fem = false;
 
     @Column(name = "b_d")
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyy.M.d")
@@ -34,24 +37,42 @@ public class Ch {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyy.M.d")
     private Date dd;
 
+    /**
+     * 威望
+     */
+    @Column(name = "prs")
+    private BigDecimal prs;
+
+    /**
+     * 虔诚
+     */
+    @Column(name = "piety")
+    private BigDecimal piety;
+
+    /**
+     * 财富
+     */
+    @Column(name = "wealth")
+    private BigDecimal wealth;
+
     @Column(name = "level")
     private TitleLevel level;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
     @JoinColumn(name = "dnt_code")
     private Dynasty dnt;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
     private Ch fat;
 
-    @OneToMany(mappedBy = "fat",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "fat",cascade = CascadeType.ALL)
     @OrderBy("bd")
     private List<Ch> fatChildren = new ArrayList<>();
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
     private Ch mot;
 
-    @OneToMany(mappedBy = "mot",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "mot",cascade = CascadeType.ALL)
     @OrderBy("bd")
     private List<Ch> motChildren = new ArrayList<>();
 
@@ -65,11 +86,11 @@ public class Ch {
         }
     }
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
     @JoinColumn(name = "host_code")
     private Ch host;
 
-    @OneToMany(mappedBy = "host",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "host",cascade = CascadeType.ALL)
     private List<Ch> guests = new ArrayList<>();
 
     public void addGuest(Ch ch) {
@@ -82,18 +103,18 @@ public class Ch {
     @Column(name = "score")
     private int score = 0;
 
-    @OneToMany(mappedBy = "holder",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "holder",cascade = CascadeType.ALL)
     @OrderBy("level desc")
     private List<Title> titles = new ArrayList<>();
 
-    public List<Title> getTitles() {
-        // 如果不想修改
-        // 那么 return Collections.unmodifiableList(titles);
-        return new ArrayList<>(titles);
-    }
+//    public List<Title> getTitles() {
+//        // 如果不想修改
+//        // 那么 return Collections.unmodifiableList(titles);
+//        return new ArrayList<>(titles);
+//    }
 
     /**
-     * 相应的，不使用 setHolder 方法
+     * 不建议使用 setHolder 方法，而是使用 addTitle 方法
      * @param title
      */
     public void addTitle(Title title) {
@@ -101,15 +122,15 @@ public class Ch {
         titles.add(title);
     }
 
-    @OneToMany(mappedBy = "holder",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "holder",cascade = CascadeType.ALL)
     @OrderBy("sd desc")
-    private List<TitleHistory> titleHistories = new ArrayList<>();
+    private Set<TitleHistory> titleHistories = new LinkedHashSet<>();
 
 
 //    @MappedCollection(keyColumn = "title_code") // 来自于 spring-data-jdbc 包
 //    private final @org.springframework.data.annotation.AccessType
 //   (org.springframework.data.annotation.AccessType.Type.FIELD) @With(AccessLevel.PACKAGE) Map<String, Oh> ohs = new HashMap<>();
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.REFRESH)
     @JoinTable(name = "oh",
             inverseJoinColumns = @JoinColumn(name = "title_code"),
             joinColumns = @JoinColumn(name = "ch_code"))

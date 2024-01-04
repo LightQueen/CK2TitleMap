@@ -1,8 +1,8 @@
 package com.example.accessingdatajpa.util;
 
+import com.example.accessingdatajpa.entity.Ch;
 import com.example.accessingdatajpa.entity.Dynasty;
 import com.example.accessingdatajpa.entity.Title;
-import com.example.accessingdatajpa.entity.Ch;
 
 import java.io.*;
 import java.util.ArrayList;

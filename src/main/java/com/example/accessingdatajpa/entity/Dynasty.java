@@ -13,8 +13,8 @@ import java.util.List;
 @ToString(of = {"code","name"})
 @Getter
 @Setter
-@EqualsAndHashCode
-public class Dynasty {
+@EqualsAndHashCode(exclude = {"descendants"})
+public class Dynasty extends BaseEntity{
     @Id
     @Column(name = "code", nullable = false)
     private String code;
@@ -25,7 +25,7 @@ public class Dynasty {
     @Column(name = "score")
     private int score;
 
-    @OneToMany(mappedBy = "dnt", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "dnt", cascade = CascadeType.ALL)
     private List<Ch> descendants = new ArrayList<>();
 
     public void addDescendant(Ch ch){

@@ -1,18 +1,16 @@
 package com.example.accessingdatajpa.service;
 
-import com.example.accessingdatajpa.entity.*;
-import com.example.accessingdatajpa.entity.Ch;
 import com.example.accessingdatajpa.dao.ChRepository;
 import com.example.accessingdatajpa.dao.DynastyRepository;
 import com.example.accessingdatajpa.dao.TitleHistoryRepository;
 import com.example.accessingdatajpa.dao.TitleRepository;
+import com.example.accessingdatajpa.entity.*;
 import com.example.accessingdatajpa.util.Calc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-
 import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +28,51 @@ public class HongService {
     @Autowired
     private TitleHistoryRepository titleHistoryRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
+    public void test(){
+//        Title title = new Title();
+//        title.setCode("d_holstein");
+
+        Title title1 = new Title();
+        title1.setCode("test21");
+        title1 = titleRepository.save(title1);
+
+        Title title = new Title();
+        title.setCode("test22");
+        title1.setDe_jure_liege(title);
+        Title title2 = new Title();
+        title2.setCode("test23");
+        title2.setDe_jure_liege(title);
+        Title title3 = new Title();
+        title3.setCode("test24");
+        title3.setDe_jure_liege(title1);
+        titleRepository.saveAll(Arrays.asList(title2,title,title1,title3));
+
+        /*
+        * 210
+        * 3210
+        * 2310
+        * 2013
+        *
+        * */
+
+//        titleRepository.save(title);
+//        title.setName("test1");
+//        TitleHistory titleHistory = new TitleHistory();
+//        titleHistory.setTitle(title);
+//        titleHistory.setExpiredDays(3);
+//        TitleHistory titleHistory1 = new TitleHistory();
+//        titleHistory1.setTitle(title);
+//        titleHistory1.setExpiredDays(4);
+//        title.getTitleHistories().add(titleHistory);
+//        title.getTitleHistories().add(titleHistory1);
+//        titleRepository.save(title);
+    }
+
+    /**
+     * 清空数据
+     */
+    @Transactional
     public void clearHong() {
         // 删除
         titleHistoryRepository.deleteAll();
@@ -122,7 +164,12 @@ public class HongService {
         List<Title> k_titles = Arrays.asList(k_DaGuanYuan,k_RongGuoFu,k_NingGuoFu);
         List<Title> d_titles = Arrays.asList(d_DaGuanYuan);
         List<Title> c_titles = Arrays.asList(c_YiHongYuan,c_XiaoXiangGuan,c_HengWuYuan,c_DaoXiangCun);
-        List<Title> titles = new ArrayList<>(){{addAll(c_titles);addAll(d_titles);addAll(k_titles);addAll(e_titles);}};
+        List<Title> titles = new ArrayList<>();
+        titles.addAll(e_titles);
+        titles.addAll(k_titles);
+        titles.addAll(d_titles);
+        titles.addAll(c_titles);
+//        List<Title> titles = new ArrayList<>(){{addAll(c_titles);addAll(d_titles);addAll(k_titles);addAll(e_titles);}};
         titles.forEach(title -> {Calc.calcLevel(title);});
 
         List<Ch> chs = Arrays.asList(JiaDaiShan,JiaMu,JiaZheng,JiaBaoYu,WangFuRen,XueBaoChai,LinDaiYu);
@@ -226,6 +273,7 @@ public class HongService {
      * 一个家族的领地，及各级地块的 DynastyDepth。
      *
      * @param dntCode 家族的编号
+     * @param type 计算方式
      * @return
      */
     public Map<Title, Integer> realmWithDynastyDepthByDynCode(String dntCode,int type) {
@@ -303,35 +351,5 @@ public class HongService {
                 .flatMap(entry -> realmOfCh(entry.getKey()).stream()
                         .map(title -> new AbstractMap.SimpleEntry<>(title,entry.getValue())))
                 .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,Math::max));
-    }
-
-    public void test() {
-//        Ch JiaBaoYu = characterRepository.findById("JiaBaoYu").get();
-//        Output.list(JiaBaoYu.getTitles(),"JiaBaoYu's title");
-//        Calc.calcLevel(JiaBaoYu);
-//        Calc.calcScore(JiaBaoYu);
-//        Calc.calcScore(JiaBaoYu.getDnt());
-//        chRepository.save(JiaBaoYu);
-//        dynastyRepository.save(JiaBaoYu.getDnt());
-
-//        Title title = titleRepository.findById("c_HengWuYuan").get();
-
-//        titleRepository.deleteById("c_HengWuYuan");
-//        titleRepository.flush();
-        Title k_DaGuanYuan = titleRepository.findById("k_DaGuanYuan").get();
-//        Ch XueBaoChai = characterRepository.findById("XueBaoChai").get();
-//        Title c_HengWuYuan = new Title("c_HengWuYuan","蘅芜苑");
-//        c_HengWuYuan.setDe_jure_liege(null);
-//        c_HengWuYuan.setHolder(XueBaoChai);
-////        c_HengWuYuan.setLevel(TitleLevel.D);
-//        c_HengWuYuan = titleRepository.saveAndFlush(c_HengWuYuan);
-//
-//
-//        TitleLevel level = c_HengWuYuan.getLevel();
-//        if (level != null) {
-//            System.out.println(level.getScore());
-//        } else {
-//            System.out.println("无数据");
-//        }
     }
 }

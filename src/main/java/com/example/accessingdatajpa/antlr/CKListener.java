@@ -1,4 +1,4 @@
-// Generated from G:/Documents/myjob/IdeaProjects2/demo2/demo2/src/main/java/com/example/accessingdatajpa/antlr\CK.g4 by ANTLR 4.10.1
+// Generated from C:/Users/Lucas/IdeaProjects/CK2TitleMap/src/main/java/com/example/accessingdatajpa/antlr\CK.g4 by ANTLR 4.12.0
 package com.example.accessingdatajpa.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -18,16 +18,6 @@ public interface CKListener extends ParseTreeListener {
 	 */
 	void exitInit(CKParser.InitContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CKParser#array}.
-	 * @param ctx the parse tree
-	 */
-	void enterArray(CKParser.ArrayContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CKParser#array}.
-	 * @param ctx the parse tree
-	 */
-	void exitArray(CKParser.ArrayContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CKParser#pair}.
 	 * @param ctx the parse tree
 	 */
@@ -37,6 +27,36 @@ public interface CKListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPair(CKParser.PairContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CKParser#map}.
+	 * @param ctx the parse tree
+	 */
+	void enterMap(CKParser.MapContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CKParser#map}.
+	 * @param ctx the parse tree
+	 */
+	void exitMap(CKParser.MapContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CKParser#list}.
+	 * @param ctx the parse tree
+	 */
+	void enterList(CKParser.ListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CKParser#list}.
+	 * @param ctx the parse tree
+	 */
+	void exitList(CKParser.ListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CKParser#array}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray(CKParser.ArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CKParser#array}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray(CKParser.ArrayContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CKParser#val}.
 	 * @param ctx the parse tree

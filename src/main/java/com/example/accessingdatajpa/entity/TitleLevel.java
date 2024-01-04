@@ -11,10 +11,11 @@ public enum TitleLevel {
     TitleLevel(int score) {
         this.score = score;
     }
-    public static TitleLevel of(String level){
-        for (TitleLevel l : TitleLevel.values()) {
-            if (l.name().equals(level.substring(0,1).toUpperCase())){
-                return l;
+    public static TitleLevel of(String value){
+        TitleLevel[] values = TitleLevel.values();
+        for (TitleLevel t : values) {
+            if (t.name().equals(value.substring(0,1).toUpperCase())){
+                return t;
             }
         }
         return null;

@@ -5,7 +5,9 @@ import com.example.accessingdatajpa.entity.Title;
 import com.example.accessingdatajpa.entity.Ch;
 import com.example.accessingdatajpa.entity.TitleLevel;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Calc {
 

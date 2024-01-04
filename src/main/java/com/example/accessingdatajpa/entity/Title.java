@@ -7,35 +7,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-//@EntityListeners(TitleListener.class)
 @ToString(of = {"code","name"})
 @Getter
 @Setter
-@EqualsAndHashCode
-@NoArgsConstructor//(access=AccessLevel.PRIVATE)
-@RequiredArgsConstructor //会为 @NonNull 和 final 的属性，生成构造方法
-public class Title {
+@EqualsAndHashCode(exclude = {"holder","liege","vassals","de_jure_liege","de_jure_vassals","titleHistories"})
+@NoArgsConstructor
+//@RequiredArgsConstructor //会为 @NonNull 和 final 的属性，生成构造方法
+public class Title extends BaseEntity{
     @Id
     @Column(name = "code", nullable = false)
-    @NonNull
     private String code;
 
     @Column(name = "name")
-    @NonNull
     private String name;
 
     @Column(name = "level")
     private TitleLevel level;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "holder_code")
     private Ch holder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "liege_code")
     private Title liege;
 
-    @OneToMany(mappedBy = "liege",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "liege",cascade = CascadeType.ALL)
     private List<Title> vassals;
 
     public void addVassal(Title vassal){
@@ -43,11 +40,11 @@ public class Title {
         vassals.add(vassal);
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "de_jure_liege_code")
     private Title de_jure_liege;
 
-    @OneToMany(mappedBy = "de_jure_liege",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "de_jure_liege",cascade = CascadeType.ALL)
     private List<Title> de_jure_vassals;
 
     public void add_De_jure_vassal(Title de_jure_vassal) {
@@ -55,10 +52,19 @@ public class Title {
         de_jure_vassals.add(de_jure_vassal);
     }
 
-    @OneToMany(mappedBy = "title",cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "title",cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sd desc")
     private List<TitleHistory> titleHistories = new ArrayList<>();
 
+    public void addTitleHistory(TitleHistory titleHistory) {
+        titleHistories.add(titleHistory);
+        titleHistory.setTitle(this);
+    }
+
+    public Title(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
 
     // @PrePersist
     // @PreUpdate

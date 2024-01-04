@@ -8,12 +8,12 @@ import java.sql.Date;
 
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor//(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class TitleHistory {
+@EqualsAndHashCode(exclude = {"title","holder"})
+public class TitleHistory{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

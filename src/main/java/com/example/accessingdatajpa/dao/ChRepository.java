@@ -2,13 +2,13 @@ package com.example.accessingdatajpa.dao;
 
 import com.example.accessingdatajpa.entity.Ch;
 import com.example.accessingdatajpa.entity.Dynasty;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ChRepository extends JpaRepository<Ch, String> {
+public interface ChRepository extends BaseRepository<Ch> {
 
     List<Ch> findAllByDnt(Dynasty dynasty);
+
 
     List<Ch> findAllByDnt_CodeOrderByLevelDesc(String code);
 
